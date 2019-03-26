@@ -1,9 +1,6 @@
 # SEIT BOT
 
 This bot is created for SEIT Students of Fr.CRCE College,Bandra.For accessing all assignments,Files without accesing moodle server of college directly to the mobile.
-	
-image:: https://img.shields.io/cocoapods/l/:spec.svg
-image:: https://img.shields.io/pypi/pyversions/3.svg?style=flat-square
 
 ## Installation
 
