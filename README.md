@@ -2,10 +2,8 @@
 
 This bot is created for SEIT Students of Fr.CRCE College,Bandra.For accessing all assignments,Files without accesing moodle server of college directly to the mobile.
 	
-.. image:: https://img.shields.io/cocoapods/l/:spec.svg
-   :target: https://github.com/pushpak1300/SEITbot/blob/master/LICENSE.md
-   
- .. image:: https://img.shields.io/pypi/pyversions/3.svg?style=flat-square
+image:: https://img.shields.io/cocoapods/l/:spec.svg
+image:: https://img.shields.io/pypi/pyversions/3.svg?style=flat-square
 
 ## Installation
 
@@ -22,6 +20,6 @@ Enter your bot Token collected from [Bot Father](https://telegram.me/botfather) 
 ```bash
 python herokubot.py
 ```
+## Hosting and Documentation
 
-##Hosting and Documentation
-If You want to host your bot Click here For [documentation](https://github.com/python-telegram-bot/python-telegram-bot/wiki).
+If You want to [Host](https://github.com/python-telegram-bot/python-telegram-bot/wiki/Where-to-host-Telegram-Bots) your bot Click here For [documentation](https://github.com/python-telegram-bot/python-telegram-bot/wiki).
