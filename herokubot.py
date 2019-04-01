@@ -2,12 +2,27 @@
 # -*- coding: utf-8 -*-
 # import libraries
 import telegram
+from uuid import uuid4
 from telegram.ext.dispatcher import run_async
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, InlineQueryHandler
 import logging
 from telegram import InlineQueryResultArticle, InputTextMessageContent
-from telegram.error import (TelegramError, Unauthorized, BadRequest,
-                            TimedOut, ChatMigrated, NetworkError)
+from telegram.error import (TelegramError, Unauthorized, BadRequest,TimedOut, ChatMigrated, NetworkError)
+import mysql.connector
+import time
+
+
+
+#database connectin
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  passwd="",
+  database="seitbot"
+)
+
+mycursor = mydb.cursor()
+d={}
 
 # used for log
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -15,10 +30,13 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 @run_async
 def start(update, context):
     context.bot.send_chat_action(chat_id=update.message.chat_id, action=telegram.ChatAction.TYPING)
-    custom_keyboard = [['Hello', ''], ['COMPUETER NETWORKS', 'AUTOMATA THEORY'], ['OPERATING SYSTEMS', 'PYTHON LAB'],
+
+    custom_keyboard = [['Hello', ''], ['COMPUTER NETWORKS', 'AUTOMATA THEORY'], ['OPERATING SYSTEMS', 'PYTHON LAB'],
                            ['COMPUTER ORGANIZATION AND ARCHITECTURE'], ['Report Bug', '']]
     reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
     context.bot.send_message(chat_id=update.message.chat_id, text="<b> Please Select Subject.</b>",parse_mode=telegram.ParseMode.HTML, reply_markup=reply_markup)
+    user_name = update.message.from_user.first_name
+    print(user_name+"\tstart")
 
 @run_async
 def error(bot, update, error):
@@ -26,23 +44,38 @@ def error(bot, update, error):
 
 @run_async
 def text(update, context):
-    if update.message.text == "START":
+    context.bot.send_chat_action(chat_id=update.message.chat_id, action=telegram.ChatAction.TYPING)
+
+
+    if update.message.text == "START" or update.message.text == "HOME":
         context.bot.send_chat_action(chat_id=update.message.chat_id, action=telegram.ChatAction.TYPING)
         context.bot.send_chat_action(chat_id=update.message.chat_id, action=telegram.ChatAction.TYPING)
-        custom_keyboard = [['Hello', ''], ['COMPUETER NETWORKS', 'AUTOMATA THEORY'],
+        custom_keyboard = [['Hello', ''], ['COMPUTER NETWORKS', 'AUTOMATA THEORY'],
                            ['OPERATING SYSTEMS', 'PYTHON LAB'],
                            ['COMPUTER ORGANIZATION AND ARCHITECTURE'], ['Report Bug', '']]
         reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
         context.bot.send_message(chat_id=update.message.chat_id, text="<b> Please Select Subject.</b>",
                                  parse_mode=telegram.ParseMode.HTML, reply_markup=reply_markup)
+
+
+        '''all_user_data={}
+        # Create user dict if it doesn't exist
+        if user_name not in all_user_data:
+            all_user_data[user_name] = dict()
+
+    # Store value
+        user_data = all_user_data[user_name]
+        user_data[key] = value
+        print(all_user_data)'''
+
     elif update.message.text == "Hello":
         context.bot.send_message(chat_id=update.message.chat_id,
                                  text='Hello {}'.format(update.message.from_user.first_name) + ',Welcome to the bot!')
-    elif update.message.text == "COMPUETER NETWORKS" or update.message.text == "BACKCN":
+    elif update.message.text == "COMPUTER NETWORKS" or update.message.text == "BACKCN":
         context.bot.send_chat_action(chat_id=update.message.chat_id, action=telegram.ChatAction.TYPING)
         custom_keyboard = [['CN LABS AND ASSIGNMENT'],
                            ['CN STUDY MATERIAL'],
-                           ['CN SOLUTION'],['START']]
+                           ['CN SOLUTION'],['HOME']]
         reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
         context.bot.send_message(chat_id=update.message.chat_id, text="<b>Please Select the Option!</b>",
                                  parse_mode=telegram.ParseMode.HTML, reply_markup=reply_markup)
@@ -50,7 +83,7 @@ def text(update, context):
         context.bot.send_chat_action(chat_id=update.message.chat_id, action=telegram.ChatAction.TYPING)
         custom_keyboard = [['AT TUTORIAL'],
                            ['AT STUDY MATERIAL'],
-                           ['AT SOLUTION'],['START']]
+                           ['AT SOLUTION'],['HOME']]
         reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
         context.bot.send_message(chat_id=update.message.chat_id, text="<b>Please Select the Option!</b>",
                                  parse_mode=telegram.ParseMode.HTML, reply_markup=reply_markup)
@@ -58,7 +91,7 @@ def text(update, context):
         context.bot.send_chat_action(chat_id=update.message.chat_id, action=telegram.ChatAction.TYPING)
         custom_keyboard = [['OS LAB AND ASSIGNMENT'],
                            ['OS STUDY MATERIAL'],
-                           ['OS SOLUTION'], ['START']]
+                           ['OS SOLUTION'], ['HOME']]
         reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
         context.bot.send_message(chat_id=update.message.chat_id, text="<b>Please Select the Option!</b>",
                                  parse_mode=telegram.ParseMode.HTML, reply_markup=reply_markup)
@@ -66,14 +99,14 @@ def text(update, context):
         context.bot.send_chat_action(chat_id=update.message.chat_id, action=telegram.ChatAction.TYPING)
         custom_keyboard = [['PY LAB AND ASSIGNMENT'],
                            ['PY STUDY MATERIAL'],
-                           ['PY SOLUTION'], ['START']]
+                           ['PY SOLUTION'], ['HOME']]
         reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
         context.bot.send_message(chat_id=update.message.chat_id, text="<b>Please Select the Option!</b>",
                                  parse_mode=telegram.ParseMode.HTML, reply_markup=reply_markup)
     elif update.message.text == "COMPUTER ORGANIZATION AND ARCHITECTURE" or update.message.text == "BACKCOA" :
         context.bot.send_chat_action(chat_id=update.message.chat_id, action=telegram.ChatAction.TYPING)
         custom_keyboard = [['COA LAB AND ASSIGNMENT'],
-                           ['COA SOLUTION'], ['START']]
+                           ['COA SOLUTION'], ['HOME']]
         reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
         context.bot.send_message(chat_id=update.message.chat_id, text="<b>Please Select the Option!</b>",
                                  parse_mode=telegram.ParseMode.HTML, reply_markup=reply_markup)
@@ -94,6 +127,7 @@ def text(update, context):
                            ['CN LABS 10'],
                            ['CN LABS 11'],
                            ['CN LABS 12'],
+                           ['CASE STUDY'],
                            ['CN ASSIGNMENT 1'],
                            ['START', 'BACKCN']]
         reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
@@ -113,6 +147,7 @@ def text(update, context):
                            ['OS LABS 5'],
                            ['OS LABS 6'],
                            ['OS LABS 7'],
+                           ['OS MOCK TEST'],
                          ['START', 'BACKOS']]
         reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
         context.bot.send_message(chat_id=update.message.chat_id, text="<b>Please Select the labs!</b>",
@@ -131,8 +166,11 @@ def text(update, context):
                            ['PY LABS 10'],
                            ['PY LABS 11'],
                            ['PY LABS 12'],
+                           ['PY LABS 13'],
+                           ['PY LABS 14'],
                            ['PY ASSIGNMENT 1'],
                            ['PY ASSIGNMENT 2'],
+                           ['Mock Test'],
                            ['START', 'BACKPY']]
         reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
         context.bot.send_message(chat_id=update.message.chat_id, text="<b>Please Select the labs!</b>",
@@ -155,17 +193,21 @@ def text(update, context):
         context.bot.send_chat_action(chat_id=update.message.chat_id, action=telegram.ChatAction.TYPING)
         custom_keyboard = [['COA LABMANUAL'],
                            ['COA ASSIGNMENT 1'],
+                           ['COA ASSIGNMENT 2'],
                            ['START', 'BACKCOA']]
         reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard)
         context.bot.send_message(chat_id=update.message.chat_id, text="<b>Please Select the labs!</b>",
                                  parse_mode=telegram.ParseMode.HTML, reply_markup=reply_markup)
-    elif update.message.text == "CN SOLUTION" or update.message.text == "COA SOLUTION" or update.message.text == "PY SOLUTION" or update.message.text == "AT SOLUTION" or update.message.text == "OS SOLUTION":
+    elif update.message.text == "CN SOLUTION" or update.message.text == "COA SOLUTION" or update.message.text == "AT SOLUTION" or update.message.text == "OS SOLUTION":
         context.bot.send_message(chat_id=update.message.chat_id, text="<b>BOT IS STILL IN BETA VERSION CONTACT :- </b>@pushpak1300",
                                  parse_mode=telegram.ParseMode.HTML)
     elif update.message.text == "COA LABMANUAL":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('COA/labmanual.pdf', 'rb'))
+        context.bot.send_document(chat_id=update.message.chat_id, document=open('COA/labmanual.doc', 'rb'))
     elif update.message.text == "COA ASSIGNMENT 1":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('COA/coaassignment1.docx', 'rb'))
+    elif update.message.text == "COA ASSIGNMENT 2":
+        context.bot.send_document(chat_id=update.message.chat_id, document=open('COA/coaassignment2.docx', 'rb'))
     elif update.message.text == "CN LABS 1":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('CN/cnassignment1.pdf', 'rb'))
     elif update.message.text == "CN LABS 2":
@@ -175,7 +217,7 @@ def text(update, context):
     elif update.message.text == "CN LABS 4":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('CN/cnassignment4.docx', 'rb'))
     elif update.message.text == "CN LABS 5":
-        ccontext.bot.send_document(chat_id=update.message.chat_id, document=open('CN/cnassignment5.docx', 'rb'))
+        context.bot.send_document(chat_id=update.message.chat_id, document=open('CN/cnassignment5.docx', 'rb'))
     elif update.message.text == "CN LABS 6":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('CN/cnassignment6.docx', 'rb'))
     elif update.message.text == "CN LABS 7":
@@ -190,6 +232,11 @@ def text(update, context):
         context.bot.send_document(chat_id=update.message.chat_id, document=open('CN/cnassignment11.docx', 'rb'))
     elif update.message.text == "CN LABS 12":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('CN/cnassignment12.docx', 'rb'))
+    elif update.message.text == "CN ASSIGNMENT 1":
+        context.bot.send_document(chat_id=update.message.chat_id, document=open('CN/cn1.doc', 'rb'))
+    elif update.message.text == "CASE STUDY":
+        context.bot.send_document(chat_id=update.message.chat_id, document=open('CN/Casestudy.docx', 'rb'))
+        context.bot.send_document(chat_id=update.message.chat_id, document=open('CN/PacketCapture.pdf', 'rb'))
     elif update.message.text == "OS LABS 1-1":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('OS/oslab1-1.pdf', 'rb'))
     elif update.message.text == "OS LABS 1-2":
@@ -212,8 +259,8 @@ def text(update, context):
         context.bot.send_document(chat_id=update.message.chat_id, document=open('OS/oslab5.pdf', 'rb'))
     elif update.message.text == "OS LABS 6":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('OS/oslab6.pdf', 'rb'))
-    elif update.message.text == "OS LABS 6":
-        context.bot.send_document(chat_id=update.message.chat_id, document=open('OS/oslab6.pdf', 'rb'))
+    elif update.message.text == "OS LABS 7":
+        context.bot.send_document(chat_id=update.message.chat_id, document=open('OS/oslab7.pdf', 'rb'))
     elif update.message.text == "PY LABS 1":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('PY/PYassignment1.pdf', 'rb'))
     elif update.message.text == "PY LABS 2":
@@ -223,7 +270,7 @@ def text(update, context):
     elif update.message.text == "PY LABS 4":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('PY/PYassignment4.pdf', 'rb'))
     elif update.message.text == "PY LABS 5":
-        ccontext.bot.send_document(chat_id=update.message.chat_id, document=open('PY/PYassignment5.pdf', 'rb'))
+        context.bot.send_document(chat_id=update.message.chat_id, document=open('PY/PYassignment5.pdf', 'rb'))
     elif update.message.text == "PY LABS 6":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('PY/PYassignment6.pdf', 'rb'))
     elif update.message.text == "PY LABS 7":
@@ -238,8 +285,12 @@ def text(update, context):
         context.bot.send_document(chat_id=update.message.chat_id, document=open('PY/PYassignment11.pdf', 'rb'))
     elif update.message.text == "PY LABS 12":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('PY/PYassignment12.pdf', 'rb'))
+    elif update.message.text == "PY LABS 13":
+        context.bot.send_document(chat_id=update.message.chat_id, document=open('PY/PYassignment13.pdf', 'rb'))
+    elif update.message.text == "PY LABS 14":
+        context.bot.send_document(chat_id=update.message.chat_id, document=open('PY/PYassignment14.pdf', 'rb'))
     elif update.message.text == "AT TUTORIAL 1":
-        context.bot.send_document(chat_id=update.message.chat_id, document=open('AT/Tutorial no 1.pdf', 'rb'))
+        context.bot.send_document(chat_id=update.message.chat_id, document=open('AT/Tutorial No 1.pdf', 'rb'))
     elif update.message.text == "AT TUTORIAL 2":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('AT/Tutorial no 2.pdf', 'rb'))
     elif update.message.text == "AT TUTORIAL 3":
@@ -252,17 +303,30 @@ def text(update, context):
         context.bot.send_document(chat_id=update.message.chat_id, document=open('AT/Tutorial no 6.pdf', 'rb'))
     elif update.message.text == "AT TUTORIAL 7":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('AT/Tutorial no 7.pdf', 'rb'))
-    elif update.message.text == "AT TUTORIAL 6":
+    elif update.message.text == "AT TUTORIAL 8":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('AT/Tutorial No 8.pdf', 'rb'))
     elif update.message.text == "PY ASSIGNMENT 1":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('PY/assignmentno1.pdf', 'rb'))
     elif update.message.text == "PY ASSIGNMENT 2":
         context.bot.send_document(chat_id=update.message.chat_id, document=open('PY/assignmentno2.pdf', 'rb'))
+    elif update.message.text == "Mock Test":
+        context.bot.send_document(chat_id=update.message.chat_id, document=open('PY/MockTest.pdf', 'rb'))
     elif update.message.text == "AT STUDY MATERIAL" or update.message.text == "COA STUDY MATERIAL" or update.message.text == "OS STUDY MATERIAL" or update.message.text == "CN STUDY MATERIAL" or update.message.text == "PY STUDY MATERIAL":
         context.bot.send_message(chat_id=update.message.chat_id,text='<b>Click :-</b><a href="https://tinyurl.com/seit-bot">Link Is Here</a>',parse_mode=telegram.ParseMode.HTML)
+    elif update.message.text == "PY SOLUTION":
+        context.bot.send_message(chat_id=update.message.chat_id,text='<b>Click :-</b><a href="https://tinyurl.com/seit-bot1">Link Is Here</a>',parse_mode=telegram.ParseMode.HTML)
+    elif update.message.text == "OS MOCK TEST":
+        context.bot.send_document(chat_id=update.message.chat_id, document=open('OS/OS MockTest.pdf', 'rb'))
     else:
-        Context.bot.send_chat_action(chat_id=update.message.chat_id, action=telegram.ChatAction.TYPING)
-        context.bot.send_message(chat_id=update.message.chat_id, text="Please Send The Text Message!!")
+        context.bot.send_chat_action(chat_id=update.message.chat_id, action=telegram.ChatAction.TYPING)
+        context.bot.send_message(chat_id=update.message.chat_id, text="Please Send The Valid Text Message!!")
+    user_name = update.message.from_user.first_name
+    user_text=update.message.text
+    sql = "INSERT INTO user (username, usertext) VALUES (%s, %s)"
+    val = (user_name,user_text)
+    mycursor.execute(sql, val)
+    mydb.commit()
+    time.sleep(2)
 
 
 @run_async
@@ -270,7 +334,12 @@ def unknown(update, context):
     context.bot.send_chat_action(chat_id=update.message.chat_id, action=telegram.ChatAction.TYPING)
     context.bot.send_message(chat_id=update.message.chat_id, text="Sorry, I didn't understand that command.")
 
-def error_callback(bot, update, error):
+@run_async
+def pls(update, context):
+    context.bot.send_chat_action(chat_id=update.message.chat_id, action=telegram.ChatAction.TYPING)
+    context.bot.send_message(chat_id=update.message.chat_id, text="Please Cllick on the Custom keyboard!")
+
+def error_callback(context, update, error):
     try:
         raise error
     except Unauthorized:
@@ -301,10 +370,10 @@ def main():
     # it is use to create dispatcher
     dispatcher = updater.dispatcher
 
-    start_handler = CommandHandler('start', start)
+    start_handler = CommandHandler('start', start,pass_user_data=True)
     dispatcher.add_handler(start_handler)
     #text handler
-    text_handler = MessageHandler(Filters.text,text)
+    text_handler = MessageHandler(Filters.text,text,pass_user_data=True)
     dispatcher.add_handler(text_handler)
 
 
@@ -314,6 +383,9 @@ def main():
     # Message is either video, photo, or document (generic file)
     pls_handler = MessageHandler(Filters.video | Filters.photo | Filters.document, start)
     dispatcher.add_handler(pls_handler)
+    #Unknown command Handler
+    unknown_handler = MessageHandler(Filters.command, unknown)
+    dispatcher.add_handler(unknown_handler)
 
 
 
